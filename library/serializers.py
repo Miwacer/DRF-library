@@ -3,6 +3,13 @@ from library.models import Book, Borrowing
 
 
 class BookSerializer(serializers.ModelSerializer):
+
+    def validate(self, attrs):
+        data = super(BookSerializer, self).validate(attrs)
+        Book.validate_inventory_count(attrs["inventory"])
+
+        return data
+
     class Meta:
         model = Book
         fields = ("id", "title", "cover", "inventory", "daily_fee")

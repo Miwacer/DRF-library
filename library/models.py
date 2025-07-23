@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
 
 class CoverType(models.TextChoices):
@@ -16,6 +17,17 @@ class Book(models.Model):
     )
     inventory = models.IntegerField()
     daily_fee = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return str(self.title)
+
+    @staticmethod
+    def validate_inventory_count(inventory):
+        if inventory <= 0:
+            raise  ValidationError("Count can't will be 0")
+
+    def clean(self):
+        Book.validate_inventory_count(self.inventory)
 
 
 class Borrowing(models.Model):
