@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from library.models import Book, Borrowing
 
 
@@ -29,3 +31,14 @@ class BorrowingSerializer(serializers.ModelSerializer):
             "book_title",
             "user"
         )
+
+    def create(self, validated_data):
+        book = validated_data["book"]
+
+        if book.inventory < 1:
+            raise ValidationError(f"{book.title}: Out of stock")
+
+        book.inventory -= 1
+        book.save()
+
+        return super().create(validated_data)
