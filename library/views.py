@@ -1,10 +1,20 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.mixins import (
+    ListModelMixin,
+    CreateModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin
+)
 
 from library.models import Book, Borrowing
 from library.permissions import IsAdminUserOrReadOnly
-from library.serializers import BookSerializer, BorrowingSerializer
+from library.serializers import (
+    BookSerializer,
+    BorrowingListSerializer,
+    BorrowingDetailSerializer,
+    BorrowingCreateSerializer
+)
 
 
 class BookViewSet(ModelViewSet, GenericViewSet):
@@ -13,10 +23,28 @@ class BookViewSet(ModelViewSet, GenericViewSet):
     permission_classes = (IsAdminUserOrReadOnly,)
 
 
-class BorrowingViewSet(ListCreateAPIView, GenericViewSet):
+class BorrowingViewSet(
+    ListModelMixin,
+    CreateModelMixin,
+    RetrieveModelMixin,
+    UpdateModelMixin,
+    GenericViewSet
+):
     queryset = Borrowing.objects.all()
-    serializer_class = BorrowingSerializer
+    serializer_class = BorrowingListSerializer
     permission_classes = (IsAuthenticated,)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return BorrowingListSerializer
+        elif self.action == "create":
+            return BorrowingCreateSerializer
+        elif self.action == "retrieve":
+            return BorrowingDetailSerializer
+        elif self.action in ["update", "partial_update"]:
+            return BorrowingDetailSerializer
+
+        return super().get_serializer_class()
 
     def get_queryset(self):
         return Borrowing.objects.filter(user=self.request.user)
