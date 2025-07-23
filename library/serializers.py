@@ -1,8 +1,24 @@
 from rest_framework import serializers
-from library.models import Book
+from library.models import Book, Borrowing
 
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ("title", "cover", "inventory", "daily_fee")
+        fields = ("id", "title", "cover", "inventory", "daily_fee")
+
+
+class BorrowingSerializer(serializers.ModelSerializer):
+    book_title = serializers.CharField(source="book.title", read_only=True)
+
+    class Meta:
+        model = Borrowing
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "book_title",
+            "user"
+        )
