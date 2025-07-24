@@ -56,11 +56,24 @@ class BorrowingListSerializer(serializers.ModelSerializer):
         )
 
 
+class BorrowingListForAdminSerializer(BorrowingListSerializer):
+    book_title = serializers.CharField(source="book.title", read_only=True)
+
+    class Meta:
+        model = Borrowing
+        fields = (
+            "id",
+            "borrow_date",
+            "expected_return_date",
+            "actual_return_date",
+            "book",
+            "book_title",
+            "user",
+        )
+
+
 class BorrowingDetailSerializer(serializers.ModelSerializer):
     book = BookInfoSerializer(read_only=True)
-    borrow_date = serializers.DateTimeField(read_only=True)
-    expected_return_date = serializers.DateTimeField(read_only=True)
-    actual_return_date = serializers.DateTimeField()
 
     class Meta:
         model = Borrowing
@@ -71,10 +84,3 @@ class BorrowingDetailSerializer(serializers.ModelSerializer):
             "actual_return_date",
             "book",
         )
-
-    def update(self, instance, validated_data):
-        if not instance.actual_return_date and validated_data.get("actual_return_date"):
-            instance.book.inventory += 1
-            instance.book.save()
-
-        return super().update(instance, validated_data)
