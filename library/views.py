@@ -21,7 +21,7 @@ from library.serializers import (
     BorrowingCreateSerializer,
     BorrowingListForAdminSerializer
 )
-
+from library.telegram import send_telegram_message
 
 class BookViewSet(ModelViewSet, GenericViewSet):
     queryset = Book.objects.all()
@@ -94,4 +94,13 @@ class BorrowingViewSet(
         return Response({"detail": "Book returned successfully."}, status=status.HTTP_200_OK)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        borrowing = serializer.save(user=self.request.user)
+
+        message = (
+            f"📚 New borrowing!\n"
+            f""
+            f"Book: {borrowing.book.title}\n"
+            f""
+            f"Expected return date: {borrowing.expected_return_date.strftime('%Y-%m-%d')}"
+        )
+        send_telegram_message(message)
