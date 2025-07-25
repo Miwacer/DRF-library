@@ -41,9 +41,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "library",
     "rest_framework",
     "user",
+    "book",
+    "borrowing"
 ]
 
 MIDDLEWARE = [
@@ -136,7 +137,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=45),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=360),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
     "ROTATE_REFRESH_TOKENS": True,
 }
