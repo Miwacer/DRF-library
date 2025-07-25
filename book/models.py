@@ -23,7 +23,7 @@ class Book(models.Model):
     @staticmethod
     def validate_inventory_count(inventory):
         if inventory <= 0:
-            raise  ValidationError("Count can't will be 0")
+            raise ValidationError("Count can't will be 0")
 
     def clean(self):
         Book.validate_inventory_count(self.inventory)

@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+
 class Borrowing(models.Model):
     borrow_date = models.DateTimeField(null=False)
     expected_return_date = models.DateTimeField(null=False)
