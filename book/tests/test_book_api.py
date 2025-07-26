@@ -1,8 +1,7 @@
-from django.core.serializers import serialize
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
-from rest_framework import status, response
+from rest_framework import status
 from django.urls import reverse
 
 from book.models import Book
